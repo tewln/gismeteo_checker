@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS weather (
     id SERIAL PRIMARY KEY,
-    date DATE,
+    date DATE UNIQUE NOT NULL,
     temperature_morning INTEGER,
     temperature_evening INTEGER,
     pressure_morning INTEGER,
