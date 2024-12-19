@@ -2,9 +2,9 @@ import os
 import telebot
 from back import get_weather
 
-APP_TOKEN = os.getenv("APP_TOKEN")
+API_TOKEN = os.getenv("API_TOKEN")
 
-bot = telebot.TeleBot(APP_TOKEN)
+bot = telebot.TeleBot(API_TOKEN)
 old_users = set()
 
 @bot.message_handler(commands=["start"])
