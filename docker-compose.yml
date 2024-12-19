@@ -1,0 +1,31 @@
+version: '3.8'
+
+networks:
+  bot_network:
+    driver: bridge
+
+
+services:
+  db:
+    container_name: gismeteo_db_bot
+    hostname: db
+    build: db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydatabase
+    networks:
+      bot_network:
+
+  bot:
+    container_name: gismeteo_tg_bot
+    build: app
+    depends_on:
+      - db
+    networks:
+      bot_network:
+    env_file:
+      - .env
