@@ -183,8 +183,8 @@ def fetch_weather_data():
 
 def main():
     while True:
-        now = datetime.datetime.now()  # Текущее время
-        next_wakeup = (now + datetime.timedelta(seconds=10))  # Изменить timedelta на days=1
+        now = datetime.datetime.now()
+        next_wakeup = (now + datetime.timedelta(days=1))
         seconds_until_wakeup = int((next_wakeup - now).total_seconds())
         buf = fetch_weather_data()
         print(buf)

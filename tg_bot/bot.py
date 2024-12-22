@@ -21,7 +21,7 @@ def give_away_weather(message):
     id = message.chat.id
     if len(message.text.split(' ')) == 3:
         command, date_, period = message.text.split()
-        if period > 31:
+        if int(period) > 31:
             bot.send_message(id, "Извини, я не могу вернуть так много информации за раз! Попробуй ввести период меньше месяца!")
             return
         if id in old_users:
