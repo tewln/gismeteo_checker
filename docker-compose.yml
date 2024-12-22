@@ -4,6 +4,8 @@ networks:
   bot_network:
     driver: bridge
 
+volumes:
+  postgres_data:
 
 services:
   db:
@@ -14,15 +16,25 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgre
+      POSTGRES_PASSWORD: postgre
       POSTGRES_DB: mydatabase
     networks:
       bot_network:
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
-  bot:
+  scrapper:
+    container_name: gismeteo_scrapper_bot
+    build: scrapper
+    depends_on:
+      - db
+    networks:
+      bot_network:
+
+  tg_bot:
     container_name: gismeteo_tg_bot
-    build: app
+    build: tg_bot
     depends_on:
       - db
     networks:

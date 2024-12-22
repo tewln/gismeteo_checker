@@ -1,4 +1,3 @@
-import os
 import psycopg2
 import requests
 from itertools import accumulate
@@ -12,8 +11,8 @@ GISMETEO_URL = "https://www.gismeteo.ru/weather-chelyabinsk-4565/"
 def get_db_connection():
     return psycopg2.connect(
         dbname='mydatabase',
-        user='user',
-        password='password',
+        user='postgre',
+        password='postgre',
         host='db',
         port='5432'
     )
@@ -50,6 +49,7 @@ def save_weather_to_db(weather_data: dict):
     except Exception as e:
         print(f"Error while saving data to DB: {e}")
     finally:
+        print("Om-nom-nom")
         cursor.close()
         connection.close()
 
@@ -119,7 +119,7 @@ def fetch_weather_data():
                     else:
                         precipitations.append(weather.replace("  ", " ")[weather.find(",") + 2: len(weather)].capitalize())
                 else:
-                    precipitations.append("-")
+                    precipitations.append("Отсутствуют")
         return precipitations
 
     def get_cloudiness(soup: BeautifulSoup):
@@ -163,6 +163,10 @@ def fetch_weather_data():
     cloudiness = get_average_word(get_cloudiness(soup))
     wind_speed = get_average_values(list(map(lambda i: int(i), get_wind_speeds(soup))))
     wind_directions = get_average_word(get_wind_directions(soup))
+    for i in range(0, 2):
+        if wind_speed[i] == 0 or wind_directions[i] == 'Ш':
+            wind_speed[i] = 0
+            wind_directions[i] = 'Ш'
     current_date = datetime.date.today().isoformat()
     weather_per_day = dict()
     weather_per_day.update({current_date: dict()})
@@ -182,7 +186,9 @@ def main():
         now = datetime.datetime.now()  # Текущее время
         next_wakeup = (now + datetime.timedelta(seconds=10))  # Изменить timedelta на days=1
         seconds_until_wakeup = int((next_wakeup - now).total_seconds())
-        save_weather_to_db(fetch_weather_data())
+        buf = fetch_weather_data()
+        print(buf)
+        save_weather_to_db(buf)
         time.sleep(seconds_until_wakeup - 1)
 
 if __name__ == "__main__":
