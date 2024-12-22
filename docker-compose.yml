@@ -1,0 +1,43 @@
+version: '3.8'
+
+networks:
+  bot_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+
+services:
+  db:
+    container_name: gismeteo_db_bot
+    hostname: db
+    build: db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgre
+      POSTGRES_PASSWORD: postgre
+      POSTGRES_DB: mydatabase
+    networks:
+      bot_network:
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  scrapper:
+    container_name: gismeteo_scrapper_bot
+    build: scrapper
+    depends_on:
+      - db
+    networks:
+      bot_network:
+
+  tg_bot:
+    container_name: gismeteo_tg_bot
+    build: tg_bot
+    depends_on:
+      - db
+    networks:
+      bot_network:
+    env_file:
+      - .env
